@@ -8,10 +8,12 @@ import (
 )
 
 type Repository struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	URI      string `json:"uri"`
-	Password string `json:"password"`
+	ID            string   `json:"id"`
+	Name          string   `json:"name"`
+	URI           string   `json:"uri"`
+	Password      string   `json:"password"`
+	SourceFolders []string `json:"sourceFolders"`
+	Excludes      []string `json:"excludes"`
 }
 
 type AppConfig struct {

@@ -2,10 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useToast } from '../ToastContext';
 import { EventsOn, EventsOff } from '../../wailsjs/runtime/runtime';
 import {
-    GetRepositories, StartBackup, CancelBackup, SelectFolders, InitRepository
+    GetRepositories, StartBackup, CancelBackup, SelectFolders, InitRepository, UpdateRepository
 } from '../../wailsjs/go/main/App';
 
-interface Repo { id: string; name: string; uri: string; password: string; }
+interface Repo { id: string; name: string; uri: string; password: string; sourceFolders: string[]; excludes: string[]; }
 interface Progress {
     message_type: string;
     percent_done: number;
@@ -60,6 +60,14 @@ export default function Backup() {
     }, []);
 
     useEffect(() => {
+        const r = repos.find(x => x.id === selectedRepo);
+        if (r) {
+            setPaths(r.sourceFolders || []);
+            setExcludes((r.excludes && r.excludes.length > 0) ? r.excludes : ['node_modules', '.git', '__pycache__']);
+        }
+    }, [selectedRepo]);
+
+    useEffect(() => {
         EventsOn('backup:progress', (p: Progress) => {
             if (p.message_type === 'status') setProgress(p);
             else if (p.message_type === 'summary') setSummary(p);
@@ -69,17 +77,58 @@ export default function Backup() {
         return () => { EventsOff('backup:progress'); EventsOff('backup:complete'); EventsOff('backup:error'); };
     }, []);
 
-    const addPaths = useCallback(async () => {
+    const updateRepoConfig = (newPaths: string[], newExcludes: string[]) => {
+        if (!selectedRepo) return;
+        setRepos(prev => {
+            const r = prev.find(x => x.id === selectedRepo);
+            if (r) {
+                const updated = { ...r, sourceFolders: newPaths, excludes: newExcludes };
+                UpdateRepository(updated).catch(console.error);
+                return prev.map(x => x.id === r.id ? updated : x);
+            }
+            return prev;
+        });
+    };
+
+    const addPaths = async () => {
         try {
             const dirs = await SelectFolders();
-            if (dirs && dirs.length > 0) setPaths(p => [...new Set([...p, ...dirs])]);
+            if (dirs && dirs.length > 0) {
+                setPaths(p => {
+                    const next = [...new Set([...p, ...dirs])];
+                    updateRepoConfig(next, excludes);
+                    return next;
+                });
+            }
         } catch (e: unknown) { addToast({ type: 'error', title: 'Error', message: String(e) }); }
-    }, [addToast]);
+    };
 
     const addExclude = () => {
         const v = excludeInput.trim();
-        if (v && !excludes.includes(v)) setExcludes(p => [...p, v]);
+        if (v && !excludes.includes(v)) {
+            setExcludes(p => {
+                const next = [...p, v];
+                updateRepoConfig(paths, next);
+                return next;
+            });
+        }
         setExcludeInput('');
+    };
+
+    const removePath = (pathToRemove: string) => {
+        setPaths(p => {
+            const next = p.filter(x => x !== pathToRemove);
+            updateRepoConfig(next, excludes);
+            return next;
+        });
+    };
+
+    const removeExclude = (exToRemove: string) => {
+        setExcludes(p => {
+            const next = p.filter(x => x !== exToRemove);
+            updateRepoConfig(paths, next);
+            return next;
+        });
     };
 
     const start = async () => {
@@ -133,7 +182,7 @@ export default function Backup() {
                         {paths.map(p => (
                             <div key={p} className="path-item">
                                 <span>📁 {p}</span>
-                                <span className="path-remove" onClick={() => setPaths(ps => ps.filter(x => x !== p))}>✕</span>
+                                <span className="path-remove" onClick={() => removePath(p)}>✕</span>
                             </div>
                         ))}
                     </div>}
@@ -154,7 +203,7 @@ export default function Backup() {
                     {excludes.map(ex => (
                         <span key={ex} className="tag-chip">
                             {ex}
-                            <span className="tag-remove" onClick={() => setExcludes(p => p.filter(x => x !== ex))}>✕</span>
+                            <span className="tag-remove" onClick={() => removeExclude(ex)}>✕</span>
                         </span>
                     ))}
                 </div>

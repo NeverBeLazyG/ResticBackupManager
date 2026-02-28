@@ -9,5 +9,9 @@
   "author": {
     "name": "",
     "email": ""
+  },
+  "info": {
+    "productName": "ResticBackupManager",
+    "productVersion": "0.9.1"
   }
 }
