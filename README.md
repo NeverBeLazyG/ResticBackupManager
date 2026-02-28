@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-0.9-blue" />
+  <img src="https://img.shields.io/badge/version-0.9.1-blue" />
   <img src="https://img.shields.io/badge/platform-Windows-lightgrey" />
   <img src="https://img.shields.io/badge/built%20with-Wails%20v2-blueviolet" />
   <img src="https://img.shields.io/badge/license-MIT-green" />
