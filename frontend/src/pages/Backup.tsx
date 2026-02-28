@@ -65,7 +65,7 @@ export default function Backup() {
             setPaths(r.sourceFolders || []);
             setExcludes((r.excludes && r.excludes.length > 0) ? r.excludes : ['node_modules', '.git', '__pycache__']);
         }
-    }, [selectedRepo]);
+    }, [selectedRepo, repos]);
 
     useEffect(() => {
         EventsOn('backup:progress', (p: Progress) => {
@@ -94,11 +94,9 @@ export default function Backup() {
         try {
             const dirs = await SelectFolders();
             if (dirs && dirs.length > 0) {
-                setPaths(p => {
-                    const next = [...new Set([...p, ...dirs])];
-                    updateRepoConfig(next, excludes);
-                    return next;
-                });
+                const next = [...new Set([...paths, ...dirs])];
+                setPaths(next);
+                updateRepoConfig(next, excludes);
             }
         } catch (e: unknown) { addToast({ type: 'error', title: 'Error', message: String(e) }); }
     };
@@ -106,29 +104,23 @@ export default function Backup() {
     const addExclude = () => {
         const v = excludeInput.trim();
         if (v && !excludes.includes(v)) {
-            setExcludes(p => {
-                const next = [...p, v];
-                updateRepoConfig(paths, next);
-                return next;
-            });
+            const next = [...excludes, v];
+            setExcludes(next);
+            updateRepoConfig(paths, next);
         }
         setExcludeInput('');
     };
 
     const removePath = (pathToRemove: string) => {
-        setPaths(p => {
-            const next = p.filter(x => x !== pathToRemove);
-            updateRepoConfig(next, excludes);
-            return next;
-        });
+        const next = paths.filter(x => x !== pathToRemove);
+        setPaths(next);
+        updateRepoConfig(next, excludes);
     };
 
     const removeExclude = (exToRemove: string) => {
-        setExcludes(p => {
-            const next = p.filter(x => x !== exToRemove);
-            updateRepoConfig(paths, next);
-            return next;
-        });
+        const next = excludes.filter(x => x !== exToRemove);
+        setExcludes(next);
+        updateRepoConfig(paths, next);
     };
 
     const start = async () => {

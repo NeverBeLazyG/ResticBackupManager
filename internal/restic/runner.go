@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"syscall"
 )
 
 // Runner manages restic processes
@@ -53,6 +54,7 @@ func (r *Runner) ResticPath() string {
 // Run executes a restic command and returns the combined output
 func (r *Runner) Run(repoURI, password string, args []string) (string, error) {
 	cmd := exec.Command(r.resticPath, args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if repoURI != "" {
 		cmd.Env = append(os.Environ(),
 			"RESTIC_REPOSITORY="+repoURI,
@@ -82,6 +84,7 @@ func (r *Runner) RunWithProgress(repoURI, password string, args []string, onLine
 	}()
 
 	cmd := exec.CommandContext(ctx, r.resticPath, args...)
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	cmd.Env = append(os.Environ(),
 		"RESTIC_REPOSITORY="+repoURI,
 		"RESTIC_PASSWORD="+password,
