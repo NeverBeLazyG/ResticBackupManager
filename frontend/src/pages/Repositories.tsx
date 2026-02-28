@@ -5,8 +5,8 @@ import {
     DeleteRepository, TestRepository, InitRepository
 } from '../../wailsjs/go/main/App';
 
-interface Repo { id: string; name: string; uri: string; password: string; }
-const empty = (): Repo => ({ id: '', name: '', uri: '', password: '' });
+interface Repo { id: string; name: string; uri: string; password: string; sourceFolders: string[]; excludes: string[]; }
+const empty = (): Repo => ({ id: '', name: '', uri: '', password: '', sourceFolders: [], excludes: [] });
 
 export default function Repositories() {
     const { addToast } = useToast();

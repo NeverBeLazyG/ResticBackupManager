@@ -77,7 +77,7 @@ export default function App() {
 
                     <div className="sidebar-footer">
                         <div style={{ fontWeight: 600, color: resticMissing ? 'var(--danger)' : 'var(--text-1)', marginBottom: 4, fontSize: 12 }}>
-                            Restic Backup Manager v0.9
+                            Restic Backup Manager v0.9.1
                         </div>
                         <div style={{ fontSize: 11, opacity: 0.6 }}>
                             {resticMissing ? '⚠ restic not found' : (resticVersion ? resticVersion.split('\n')[0] : '...')}

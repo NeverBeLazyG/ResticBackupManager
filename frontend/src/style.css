@@ -362,6 +362,7 @@ tbody td:first-child { color: var(--accent); font-family: monospace; font-weight
   font-size: 11px; font-family: monospace; color: var(--text-3);
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   margin-top: 10px;
+  min-height: 16px;
 }
 
 /* ── SKELETON ───────────────────────────────────────────── */

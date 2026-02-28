@@ -246,9 +246,9 @@ export default function Backup() {
                             </div>
                         </div>
                     )}
-                    {progress?.current_files?.[0] && (
-                        <div className="current-file">📄 {progress.current_files[0]}</div>
-                    )}
+                    <div className="current-file">
+                        {progress?.current_files?.[0] ? `📄 ${progress.current_files[0]}` : '\u00A0'}
+                    </div>
                 </div>
             )}
 
