@@ -44,7 +44,6 @@ export default function Backup() {
     const [repos, setRepos] = useState<Repo[]>([]);
     const [selectedRepo, setSelectedRepo] = useState('');
     const [paths, setPaths] = useState<string[]>([]);
-    const [pathInput, setPathInput] = useState('');
     const [excludes, setExcludes] = useState<string[]>(['node_modules', '.git', '__pycache__']);
     const [excludeInput, setExcludeInput] = useState('');
     const [status, setStatus] = useState<'idle' | 'running' | 'done' | 'error'>('idle');
@@ -100,16 +99,6 @@ export default function Backup() {
                 updateRepoConfig(next, excludes);
             }
         } catch (e: unknown) { addToast({ type: 'error', title: 'Error', message: String(e) }); }
-    };
-
-    const addManualPath = () => {
-        const v = pathInput.trim();
-        if (v && !paths.includes(v)) {
-            const next = [...paths, v];
-            setPaths(next);
-            updateRepoConfig(next, excludes);
-        }
-        setPathInput('');
     };
 
     const addExclude = () => {
@@ -179,16 +168,6 @@ export default function Backup() {
                         + Add Folder
                     </button>
                 </div>
-
-                <div className="input-row" style={{ marginBottom: 12 }}>
-                    <input placeholder="Or manually enter/paste path (e.g. C:\My Data)" value={pathInput}
-                        onChange={e => setPathInput(e.target.value)}
-                        onKeyDown={e => e.key === 'Enter' && addManualPath()} disabled={status === 'running'} />
-                    <button className="btn btn-secondary btn-sm" onClick={addManualPath} disabled={status === 'running'}>
-                        Add
-                    </button>
-                </div>
-
                 {paths.length === 0
                     ? <p style={{ color: 'var(--text-3)', fontSize: 13 }}>No folders selected yet.</p>
                     : <div className="paths-list">
