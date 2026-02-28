@@ -19,9 +19,9 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:     "Restic Backup Manager",
 		Width:     1200,
-		Height:    850,
+		Height:    875,
 		MinWidth:  900,
-		MinHeight: 650,
+		MinHeight: 675,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
