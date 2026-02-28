@@ -54,7 +54,15 @@ Just double-click `ResticBackupManager.exe`. No installer, no setup.
 
 ## 📸 Screenshots
 
-> Coming soon
+<p align="center">
+  <img src="assets/screenshots/2.png" alt="Backup View" width="800" />
+</p>
+<p align="center">
+  <img src="assets/screenshots/1.png" alt="Selective Restore View" width="800" />
+</p>
+<p align="center">
+  <img src="assets/screenshots/3.png" alt="Snapshots View" width="800" />
+</p>
 
 ---
 
